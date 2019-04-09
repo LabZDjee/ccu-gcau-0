@@ -1,6 +1,7 @@
-# ccu-cgau-0
+# ccu-gcau-0
 
-> CCU-gCAU kit translator
+> CCU-gCAU Kit Translator
+
 First prototype (mockup) of this CCU to gCAU Configuration Translator
 
 ## Build Setup
