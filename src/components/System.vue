@@ -3,8 +3,18 @@
     <b-container fluid>
       <b-row>
         <b-col sm="6">
-          <default-input ccuConfigId="systemRoomTemperature" title="room temperature" unit="°C"></default-input>
-          <default-input ccuConfigId="systemAltitude" title="altitude" unit="m"></default-input>
+          <default-input
+            ccuConfigId="systemRoomTemperature"
+            title="room temperature"
+            unit="°C"
+            :check="ch.checkNumber"
+          ></default-input>
+          <default-input
+            ccuConfigId="systemAltitude"
+            title="altitude"
+            unit="m"
+            :check="ch.checkNumber"
+          ></default-input>
           <default-select ccuConfigId="systemLanguage" title="language" :options="languages"></default-select>
         </b-col>
         <b-col sm="6">
@@ -19,12 +29,14 @@
 import defaultInput from "./DefInput";
 import defaultCheckbox from "./DefCheckbox";
 import defaultSelect from "./DefSelect";
+import { checks as ch, languages } from "../main";
 
 export default {
   name: "system-view",
   data() {
     return {
-      languages: ["French", "English", "Spanish", "Portuguese"],
+      languages,
+      ch,
     };
   },
   components: {

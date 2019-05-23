@@ -9,15 +9,15 @@
     <b-container fluid>
       <b-row>
         <b-col sm="3">
-          <default-input ccuConfigId="projectName" title="name"></default-input>
-          <default-input ccuConfigId="projectOrigin" title="origin"></default-input>
-         </b-col>
+          <default-input ccuConfigId="projectName" title="name" :check="checks.checkLength(16)"></default-input>
+          <default-input ccuConfigId="projectOrigin" title="origin" :check="checks.noCheck"></default-input>
+        </b-col>
         <b-col sm="3">
-          <default-input ccuConfigId="projectOrder" title="order"></default-input>
-          <default-input ccuConfigId="project" title="project"></default-input>
+          <default-input ccuConfigId="projectOrder" title="order" :check="checks.noCheck"></default-input>
+          <default-input ccuConfigId="project" title="project" :check="checks.noCheck"></default-input>
         </b-col>
         <b-col sm="6">
-          <b-form-textarea rows="3" v-model="ccuConfig.projectNotes"></b-form-textarea>
+          <b-form-textarea rows="3" v-model="projectNotes"></b-form-textarea>
         </b-col>
       </b-row>
       <b-row>
@@ -30,8 +30,8 @@
         <b-tabs card>
           <b-tab title="System" active>
             <b-card-text>
-             <system-view></system-view>
-           </b-card-text>
+              <system-view></system-view>
+            </b-card-text>
           </b-tab>
           <b-tab title="Battery">
             <b-card-text>View on Battery (To Be Defined)</b-card-text>
@@ -51,7 +51,7 @@
 import defaultInput from "./DefInput";
 import alarms from "./Alarms";
 import systemView from "./System";
-import { ccuConfig, eventBus } from "../main";
+import { ccuConfig, eventBus, checks } from "../main";
 
 export default {
   name: "Main",
@@ -64,10 +64,21 @@ export default {
     return {
       header: "CCU to GCAU Configuration Translator",
       subTitle: "from tdsa to agc...",
-      ccuConfig,
     };
   },
-  methods: {},
+  computed: {
+    projectNotes: {
+      get() {
+        return ccuConfig.projectNotes;
+      },
+      set(v) {
+        ccuConfig.projectNotes = v;
+      },
+    },
+    checks() {
+      return checks;
+    },
+  },
   created() {
     eventBus.$on("item-should-update", (item) => {
       ccuConfig[item.id] = item.contents;
