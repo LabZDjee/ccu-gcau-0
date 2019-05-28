@@ -1,9 +1,9 @@
 <template>
   <div>
     <b-form-checkbox
-      :id="ccuConfigId"
-      :name="ccuConfigId"
-      v-model="status"
+      :id="tdsKey"
+      :name="tdsKey"
+      v-model="editedStatus"
       value="true"
       unchecked-value="false"
       @change="checkHasChanged"
@@ -12,21 +12,23 @@
 </template>
 
 <script>
-import { eventBus, ccuConfig } from "../main";
+import { eventBus, defineReactWatcher } from "../main";
 
 export default {
   name: "default-checkbox",
   data() {
     return {
-      ccuConfig,
-      status: ccuConfig[this.ccuConfigId],
+      editedStatus: undefined,
     };
   },
-  props: ["ccuConfigId", "title"],
+  props: ["tdsKey", "title"],
   methods: {
     checkHasChanged(value) {
-      eventBus.dataChanged({ id: this.ccuConfigId, contents: value });
+      eventBus.dataChanged({ id: this.tdsKey, contents: value });
     },
+  },
+  created() {
+    defineReactWatcher.call(this, this.tdsKey, "editedStatus");
   },
 };
 </script>

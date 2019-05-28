@@ -5,9 +5,9 @@
         <b-col sm="5">{{title}}</b-col>
         <b-col sm="7">
           <b-form-select
-            :id="ccuConfigId"
+            :id="tdsKey"
             :options="options"
-            :value="ccuConfig[ccuConfigId]"
+            :value="selected"
             @change="selectionHasChanged"
           ></b-form-select>
         </b-col>
@@ -17,20 +17,23 @@
 </template>
 
 <script>
-import { eventBus, ccuConfig } from "../main";
+import { eventBus, defineReactWatcher } from "../main";
 
 export default {
   name: "default-select",
   data() {
     return {
-      ccuConfig,
+      selected: undefined,
     };
   },
-  props: ["ccuConfigId", "title", "options"],
+  props: ["tdsKey", "title", "options"],
   methods: {
     selectionHasChanged(value) {
-      eventBus.dataChanged({ id: this.ccuConfigId, contents: value });
+      eventBus.dataChanged({ id: this.tdsKey, contents: value });
     },
+  },
+  created() {
+    defineReactWatcher.call(this, this.tdsKey, "selected");
   },
 };
 </script>

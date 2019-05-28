@@ -5,16 +5,19 @@
         <img src="../assets/logo.png">
         <h3>{{header}}</h3>
       </div>
+      <div class="def-flex">
+        <b-form-file accept=".tdsa, .tdsn" v-model="file" v-on:change="onFileChange"></b-form-file>
+      </div>
     </b-jumbotron>
     <b-container fluid>
       <b-row>
         <b-col sm="3">
-          <default-input ccuConfigId="projectName" title="name" :check="checks.checkLength(16)"></default-input>
-          <default-input ccuConfigId="projectOrigin" title="origin" :check="checks.noCheck"></default-input>
+          <default-input tdsKey="Text_Nom" title="name" :check="checks.checkLength(16)"></default-input>
+          <default-input tdsKey="Text_Origine" title="origin" :check="checks.noCheck"></default-input>
         </b-col>
         <b-col sm="3">
-          <default-input ccuConfigId="projectOrder" title="order" :check="checks.noCheck"></default-input>
-          <default-input ccuConfigId="project" title="project" :check="checks.noCheck"></default-input>
+          <default-input tdsKey="Text_Commande" title="order" :check="checks.noCheck"></default-input>
+          <default-input tdsKey="Text_Projet" title="project" :check="checks.noCheck"></default-input>
         </b-col>
         <b-col sm="6">
           <b-form-textarea rows="3" v-model="projectNotes"></b-form-textarea>
@@ -51,7 +54,13 @@
 import defaultInput from "./DefInput";
 import alarms from "./Alarms";
 import systemView from "./System";
-import { ccuConfig, eventBus, checks } from "../main";
+import {
+  tdsData,
+  eventBus,
+  checks,
+  defineReactWatcher,
+  processTdsFile,
+} from "../main";
 
 export default {
   name: "Main",
@@ -64,25 +73,34 @@ export default {
     return {
       header: "CCU to GCAU Configuration Translator",
       subTitle: "from tdsa to agc...",
+      projectNotes: undefined,
+      file: undefined,
     };
   },
   computed: {
-    projectNotes: {
-      get() {
-        return ccuConfig.projectNotes;
-      },
-      set(v) {
-        ccuConfig.projectNotes = v;
-      },
-    },
     checks() {
       return checks;
     },
   },
   created() {
-    eventBus.$on("item-should-update", (item) => {
-      ccuConfig[item.id] = item.contents;
+    eventBus.$on("item-should-update", item => {
+      tdsData[item.id] = item.contents;
     });
+    defineReactWatcher.call(this, "Edit_COMMENT", "projectNotes");
+  },
+  methods: {
+    onFileChange(event) {
+      const file = event.target.files[0];
+      if (!file) {
+        return;
+      }
+      const reader = new FileReader();
+      reader.readAsText(file);
+      reader.onload = e => {
+        const fileContents = e.target.result;
+        processTdsFile(fileContents);
+      };
+    },
   },
 };
 </script>
@@ -92,6 +110,8 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  max-width: 600px;
+  margin: auto;
 }
 .container {
   margin: 10px;

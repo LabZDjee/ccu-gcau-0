@@ -4,42 +4,45 @@
       <b-row class="text-white bg-info">
         <b-col class="title">{{title}}</b-col>
         <b-col>
-          <default-checkbox title="enabled" :ccuConfigId="data.enabledId"></default-checkbox>
+          <default-checkbox title="enabled" :tdsKey="data.enabledId"></default-checkbox>
         </b-col>
       </b-row>
       <b-row>
-        <b-col v-if="data.th1 || data.th2">
+        <b-col sm="5" v-if="data.th1 || data.th2">
           <default-input
             v-if="data.th1"
-            :ccuConfigId="data.th1.id"
+            :tdsKey="data.th1.id"
             :title="data.th1.title"
             :unit="data.th1.unit"
+            :check="data.th1.check"
           ></default-input>
           <default-input
             v-if="data.th2"
-            :ccuConfigId="data.th2.id"
+            :tdsKey="data.th2.id"
             :title="data.th2.title"
             :unit="data.th2.unit"
+            :check="data.th2.check"
           ></default-input>
         </b-col>
         <b-col v-if="data.latch">
           <div>latch:</div>
           <default-checkbox
             v-if="data.latch.displayId"
-            :ccuConfigId="data.latch.displayId"
+            :tdsKey="data.latch.displayId"
             title="display"
           ></default-checkbox>
-          <default-checkbox
-            v-if="data.latch.relayId"
-            :ccuConfigId="data.latch.relayId"
-            title="relay"
-          ></default-checkbox>
+          <default-checkbox v-if="data.latch.relayId" :tdsKey="data.latch.relayId" title="relay"></default-checkbox>
         </b-col>
         <b-col v-if="data.delayId">
-          <default-input :ccuConfigId="data.delayId" title="delay" unit="s"></default-input>
+          <default-input
+            :tdsKey="data.delayId"
+            title="delay"
+            unit="s"
+            :check="ch.checkPositiveInteger"
+          ></default-input>
           <default-select
             v-if="data.relayNbId"
-            :ccuConfigId="data.relayNbId"
+            :tdsKey="data.relayNbId"
             title="relay"
             :options="relayList"
           ></default-select>
@@ -53,14 +56,14 @@
 import defaultInput from "./DefInput";
 import defaultCheckbox from "./DefCheckbox";
 import defaultSelect from "./DefSelect";
-import { eventBus, ccuConfig } from "../main";
+import { eventBus, checks as ch } from "../main";
 
 export default {
   name: "alarm",
   data() {
     return {
-      ccuConfig,
-      relayList: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+      relayList: [],
+      ch,
     };
   },
   // data: {enabledId, [relayNbId], [th1: {id, title, [unit]}, [th2: {id, title, [unit]}],
@@ -68,13 +71,18 @@ export default {
   props: ["data", "title"],
   methods: {
     inputHasChanged(value) {
-      eventBus.dataChanged({ id: this.ccuConfigId, contents: value });
+      eventBus.dataChanged({ id: this.tdsKey, contents: value });
     },
   },
   components: {
     "default-checkbox": defaultCheckbox,
     "default-input": defaultInput,
     "default-select": defaultSelect,
+  },
+  created() {
+    for (let i = 0; i <= 15; i++) {
+      this.relayList[i] = `${i}`;
+    }
   },
 };
 </script>

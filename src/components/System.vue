@@ -4,21 +4,16 @@
       <b-row>
         <b-col sm="6">
           <default-input
-            ccuConfigId="systemRoomTemperature"
+            tdsKey="Label_Derating_temp"
             title="room temperature"
             unit="°C"
             :check="ch.checkNumber"
           ></default-input>
-          <default-input
-            ccuConfigId="systemAltitude"
-            title="altitude"
-            unit="m"
-            :check="ch.checkNumber"
-          ></default-input>
-          <default-select ccuConfigId="systemLanguage" title="language" :options="languages"></default-select>
+          <default-input tdsKey="Edit_ENV_ALT" title="altitude" unit="m" :check="ch.checkNumber"></default-input>
+          <default-select tdsKey="Combo_LANGUE" title="language" :options="languages"></default-select>
         </b-col>
         <b-col sm="6">
-          <default-checkbox ccuConfigId="systemAcMeter" title="AC meter"></default-checkbox>
+          <default-checkbox tdsKey="Check_SDM_TR" title="AC meter"></default-checkbox>
         </b-col>
       </b-row>
     </b-container>
