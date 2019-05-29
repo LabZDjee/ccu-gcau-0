@@ -6,7 +6,7 @@ First prototype (mockup) of this CCU to gCAU Configuration Translator
 
 ## Build Setup
 
-``` bash
+```bash
 # install dependencies
 npm install
 
@@ -30,3 +30,5 @@ npm test
 ```
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+
+Further note: about the security issue in **webpack-dev-server** (_CVE-2018-14732_), we have to live with it as upgrading from `^2` to `^3.1.11` as it is recommended breaks `npm init` for this Vue CLI 2 based application
