@@ -88,7 +88,7 @@ export default {
   },
   methods: {
     inputHasChanged(value) {
-      tdsData.Edit_COMMENT = value;
+      eventBus.dataChanged({ id: "Edit_COMMENT", contents: value });
     },
     onFileChange(event) {
       const file = event.target.files[0];
