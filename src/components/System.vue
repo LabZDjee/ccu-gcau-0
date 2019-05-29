@@ -4,7 +4,7 @@
       <b-row>
         <b-col sm="6">
           <default-input
-            tdsKey="Label_Derating_temp"
+            tdsKey="Edit_ENV_TA"
             title="room temperature"
             unit="°C"
             :check="ch.checkNumber"

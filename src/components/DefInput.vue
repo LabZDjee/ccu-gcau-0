@@ -32,10 +32,7 @@ export default {
   props: ["tdsKey", "title", "unit", "check"],
   methods: {
     inputHasChanged(value) {
-      const filteredValue =
-        typeof this.check === "function"
-          ? this.check(value, tdsData[this.tdsKey])
-          : value;
+      const filteredValue = typeof this.check === "function" ? this.check(value, tdsData[this.tdsKey]) : value;
       this.editedValue = filteredValue;
       if (filteredValue !== tdsData[this.tdsKey]) {
         eventBus.dataChanged({ id: this.tdsKey, contents: value });
@@ -46,8 +43,7 @@ export default {
     entryNotOk() {
       return typeof this.check !== "function"
         ? false
-        : this.check(this.editedValue, tdsData[this.tdsKey]) !==
-            this.editedValue;
+        : this.check(this.editedValue, tdsData[this.tdsKey]) !== this.editedValue;
     },
   },
   created() {

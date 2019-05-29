@@ -20,7 +20,7 @@
           <default-input tdsKey="Text_Projet" title="project" :check="checks.noCheck"></default-input>
         </b-col>
         <b-col sm="6">
-          <b-form-textarea rows="3" v-model="projectNotes"></b-form-textarea>
+          <b-form-textarea rows="3" v-model="projectNotes" @change="inputHasChanged"></b-form-textarea>
         </b-col>
       </b-row>
       <b-row>
@@ -54,13 +54,7 @@
 import defaultInput from "./DefInput";
 import alarms from "./Alarms";
 import systemView from "./System";
-import {
-  tdsData,
-  eventBus,
-  checks,
-  defineReactWatcher,
-  processTdsFile,
-} from "../main";
+import { tdsData, eventBus, checks, defineReactWatcher, processTdsFile } from "../main";
 
 export default {
   name: "Main",
@@ -83,12 +77,19 @@ export default {
     },
   },
   created() {
+    const that = this;
     eventBus.$on("item-should-update", item => {
+      if (tdsData[item.id] !== item.contents) {
+        that.file = undefined;
+      }
       tdsData[item.id] = item.contents;
     });
     defineReactWatcher.call(this, "Edit_COMMENT", "projectNotes");
   },
   methods: {
+    inputHasChanged(value) {
+      tdsData.Edit_COMMENT = value;
+    },
     onFileChange(event) {
       const file = event.target.files[0];
       if (!file) {

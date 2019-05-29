@@ -52,7 +52,9 @@ export const checks = {
     return newValue.match(/^\d+$/) ? newValue : oldValue;
   },
   checkLength(valueLength) {
-    return newValue => newValue.substr(0, valueLength);
+    return function f(newValue) {
+      return typeof newValue === "string" ? newValue.substr(0, valueLength) : newValue;
+    };
   },
 };
 
@@ -80,15 +82,21 @@ export function processTdsFile(fileContents) {
   const lines = fileContents.toString().split("\n");
   const pattLabel = /<Label>(.*)<\/Label>/i;
   const pattData = /<Donnee>(.*)<\/Donnee>/i;
+  const pattDataStart = /<Donnee>(.*)/i;
+  const pattDataEnd = /(.*)<\/Donnee>/i;
   const commaFloatPattern = /(\d*),(\d*)/;
+  const rightTrimPattern = /\s*$/;
   let label;
   let data;
+  let partial;
   lines.forEach(line => {
-    const resultLabel = line.match(pattLabel);
+    const trimmedLine = line.replace(rightTrimPattern, "");
+    const resultLabel = trimmedLine.match(pattLabel);
     if (resultLabel) {
       label = resultLabel[1];
+      partial = false;
     }
-    const resultData = line.match(pattData);
+    const resultData = trimmedLine.match(pattData);
     if (resultData) {
       data = resultData[1];
       if (label.startsWith("Check_") && data !== "true" && data !== "false") {
@@ -105,6 +113,20 @@ export function processTdsFile(fileContents) {
         }
       }
       tdsData[label] = data;
+    } else {
+      const resultDataStart = trimmedLine.match(pattDataStart);
+      if (resultDataStart) {
+        data = resultDataStart[1];
+        partial = true;
+      } else if (partial) {
+        const resulDataEnd = trimmedLine.match(pattDataEnd);
+        if (resulDataEnd) {
+          partial = false;
+          tdsData[label] = `${data}\r${resulDataEnd[1]}`;
+        } else {
+          data = `${data}\r${trimmedLine}`;
+        }
+      }
     }
   });
 }
@@ -123,8 +145,8 @@ function initVue() {
 axios
   .get(`/static/TDSP0APPMap.tsv`)
   .then(response => {
-    const tsv = response;
-    const lines = tsv.data.split("\n");
+    const tsv = response.data;
+    const lines = tsv.split("\n");
     const headers = lines[0].replace(/\r$/, "").split("\t");
     let key;
     let object;
@@ -143,10 +165,26 @@ axios
     }
     initTdsData();
     initVue();
+    axios.get(`/static/template.tdsa`).then(reply => {
+      processTdsFile(reply.data);
+    });
   })
   .catch(error => {
     // eslint-disable-next-line
     console.log(error);
   });
 
-export const languages = ["French", "English", "Spanish", "Portuguese"];
+export const languages = [
+  "English",
+  "Dutch",
+  "Spanish",
+  "Italian",
+  "Finnish",
+  "Swedish",
+  "French",
+  "German",
+  "Slovakian",
+  "USA",
+  "Norwegian",
+  "Portuguese",
+];
